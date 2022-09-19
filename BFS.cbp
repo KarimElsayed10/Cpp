@@ -1,40 +1,70 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<CodeBlocks_project_file>
-	<FileVersion major="1" minor="6" />
-	<Project>
-		<Option title="BFS" />
-		<Option pch_mode="2" />
-		<Option compiler="gcc" />
-		<Build>
-			<Target title="Debug">
-				<Option output="bin/Debug/BFS" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Debug/" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-g" />
-				</Compiler>
-			</Target>
-			<Target title="Release">
-				<Option output="bin/Release/BFS" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Release/" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-O2" />
-				</Compiler>
-				<Linker>
-					<Add option="-s" />
-				</Linker>
-			</Target>
-		</Build>
-		<Compiler>
-			<Add option="-Wall" />
-			<Add option="-fexceptions" />
-		</Compiler>
-		<Unit filename="main.cpp" />
-		<Extensions>
-			<lib_finder disable_auto="1" />
-		</Extensions>
-	</Project>
-</CodeBlocks_project_file>
+#include <iostream>
+#include <queue>
+#include <vector>
+using namespace std;
+
+int InitialState,GoalState,NumofEdge,from,to,depth[100000];
+bool visited[100000];
+queue<int>OpenList;
+vector<int>adj[100000],ClosedList;
+void StateSpaceGraph()
+{
+    cout<<"Enter number of Edges: ";
+    cin>>NumofEdge;
+    cout<<"Enter the Edges: ";
+    for(int i=0; i<NumofEdge; i++)
+    {
+        cin>>from>>to;
+        adj[from].push_back(to);
+    }
+
+}
+void BFS(int start)
+{
+    OpenList.push(start);
+    depth[start]=0;
+    visited[start]=true;
+    while(!OpenList.empty())
+    {
+        int CurrentState=OpenList.front();
+        OpenList.pop();
+        ClosedList.push_back(CurrentState);
+        if(CurrentState==GoalState)
+        {
+            return;
+        }
+
+        for(auto state:adj[CurrentState])
+        {
+            if(visited[state])
+            {
+                continue;
+            }
+            OpenList.push(state);
+            visited[state]=true;
+            depth[state]=depth[CurrentState]+1;
+        }
+    }
+    return;
+}
+void Display()
+{
+    cout<<"The Path is: ";
+    for(int i=0; i<ClosedList.size(); i++)
+    {
+        cout<<ClosedList[i]<<" " ;
+    }
+    cout<<"The goal in level num: "<<depth[GoalState]<<endl;
+}
+
+int main()
+{
+    StateSpaceGraph();
+    cout<< "Enter the Stating Node: ";
+    cin>>InitialState;
+    cout<< "Enter the Goal Node: ";
+    cin>>GoalState;
+    BFS(InitialState);
+    Display();
+    return 0;
+}
